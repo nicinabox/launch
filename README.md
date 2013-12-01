@@ -2,6 +2,12 @@
 
 Launch web services from the command line.
 
+## Usage
+
+```bash
+$ launch SERVICE
+```
+
 ## Setup
 
 1. Clone the repo
