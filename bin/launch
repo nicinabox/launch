@@ -15,4 +15,9 @@ service = aliases[service] if aliases.include? service
 port = services[service]
 
 puts "Launching #{service}"
-`open http://#{config['host']}#{port}`
+
+if /^:/ =~ port
+  `open http://#{config['host']}#{port}`
+else
+  `open http://#{port}`
+end
