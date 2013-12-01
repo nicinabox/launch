@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+service = ARGV[0] || ''
+
+ENV['HOME'] = File.expand_path('~')
+config = JSON.parse(File.read("#{ENV['HOME']}/.launchrc"))
+
+services = config['services']
+aliases  = config['aliases']
+
+service = aliases[service] if aliases.include? service
+
+port = services[service]
+
+puts "Launching #{service}"
+`open http://#{config['host']}#{port}`
