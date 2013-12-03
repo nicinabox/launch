@@ -2,22 +2,41 @@
 
 require 'json'
 
-service = ARGV[0] || ''
+class Launch
+  def initialize(service)
+    case service
+    when 'list'
+      all_services
+    else
+      open(service)
+    end
+  end
 
-ENV['HOME'] = File.expand_path('~')
-config = JSON.parse(File.read("#{ENV['HOME']}/.launchrc"))
+  def config
+    ENV['HOME'] ||= File.expand_path('~')
+    @config ||= JSON.parse(File.read("#{ENV['HOME']}/.launchrc"))
+  end
 
-services = config['services']
-aliases  = config['aliases']
+  def all_services
+    services = config['services']
+    puts services.keys
+  end
 
-service = aliases[service] if aliases.include? service
+  def open(service)
+    services = config['services']
+    aliases  = config['aliases']
 
-port = services[service]
+    service = aliases[service] if aliases.include? service
+    port = services[service]
 
-puts "Launching #{service}"
+    puts "Launching #{service}"
 
-if /^:/ =~ port
-  `open http://#{config['host']}#{port}`
-else
-  `open http://#{port}`
+    if /^:/ =~ port
+      `open http://#{config['host']}#{port}`
+    else
+      `open http://#{port}`
+    end
+  end
 end
+
+Launch.new ARGV[0] || ''
