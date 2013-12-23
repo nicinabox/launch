@@ -3,18 +3,26 @@
 require 'json'
 
 class Launch
-  def initialize(service)
-    case service
+  def initialize(args)
+    case args[0]
+    when 'remove'
+      remove(args[1])
+    when 'add'
+      add(args[1], args[2])
     when 'list'
       all_services
     else
-      open(service)
+      open(args[0])
     end
   end
 
   def config
     ENV['HOME'] ||= File.expand_path('~')
-    @config ||= JSON.parse(File.read("#{ENV['HOME']}/.launchrc"))
+    @config ||= JSON.parse(File.read(launchrc))
+  end
+
+  def launchrc
+    "#{ENV['HOME']}/.launchrc"
   end
 
   def all_services
@@ -37,6 +45,20 @@ class Launch
       `open http://#{port}`
     end
   end
+
+  def add(name, url)
+    config['services'][name] = url
+    File.open(launchrc, 'w') do |f|
+      f.write JSON.pretty_generate(config)
+    end
+  end
+
+  def remove(name)
+    config['services'].delete(name)
+    File.open(launchrc, 'w') do |f|
+      f.write JSON.pretty_generate(config)
+    end
+  end
 end
 
-Launch.new ARGV[0] || ''
+Launch.new ARGV
