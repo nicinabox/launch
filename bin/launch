@@ -18,7 +18,7 @@ class Launch
     when /help|-h/
       list_commands
     when nil
-      list_commands
+      open_gateway
     else
       open(args[0])
     end
@@ -43,6 +43,7 @@ class Launch
 
   def list_commands
     commands = [
+      'default - open gateway',
       'add NAME URL',
       'alias NAME SERVICE',
       'remove NAME',
@@ -83,6 +84,12 @@ class Launch
 
     puts "Launching #{service} (#{url})"
     `open #{url}`
+  end
+
+  def open_gateway
+    output = `netstat -nr | grep '^default'`
+    gateway = /\d+.\d+.\d+.\d+/.match(output)
+    `open http://#{gateway}`
   end
 
   def add(name, url)
