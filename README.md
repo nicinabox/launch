@@ -19,17 +19,16 @@ Specify a port for each service starting with a colon. You may alternatively spe
 ## Example
 ```
 {
-  "host": "tower.local",
+  "host": "10.0.0.2",
   "services": {
-    "unraid": ":81",
-    "unmenu": ":8080",
-    "boxcar": ":3000",
     "plex": ":32400/web",
-    "transmission": "example.com:9091"
+    "transmission": ":9091",
+    "router": "10.0.0.1",
+    "camera": "10.0.0.8"
   },
   "aliases": {
-    "": "unraid",
-    "tr": "transmission"
+    "torrents": "transmission",
+    "orwell": "camera"
   }
 }
 ```
