@@ -11,7 +11,7 @@ class Launch
       add(args[1], args[2])
     when 'alias'
       add_alias(args[1], args[2])
-    when 'edit'
+    when /edit|init/
       open_config
     when /list|ls/
       all_services
@@ -30,6 +30,10 @@ class Launch
   end
 
   def open_config
+    unless File.exists?(launchrc)
+      `touch #{launchrc}`
+    end
+
    `open #{launchrc}`
   end
 
