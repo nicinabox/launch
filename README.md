@@ -2,17 +2,19 @@
 
 Launch web services from the command line.
 
-## Usage
+## Basic Usage
 
 ```bash
 $ launch SERVICE
 ```
 
+Run `launch help` for full usage.
+
 ## Setup
 
 1. Clone the repo
 2. Run installer in repo: `sh install`
-3. Edit `.launchrc` in your home directory
+3. Edit `~/.launchrc` (`launch edit`)
 
 Specify a port for each service starting with a colon. You may alternatively specify a full hostname with its own port. See `transmission` for an example below.
 

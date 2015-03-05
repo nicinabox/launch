@@ -5,14 +5,12 @@ cat << 'EOF' > ~/.launchrc
 // See https://github.com/nicinabox/launch for docs
 
 {
-  "host": "tower.local",
+  "host": "",
   "services": {
-    // "transmission": ":9091"
   },
   "aliases": {
-    // "": "transmission"
   }
 }
 EOF
 
-echo "Finished! Edit ~/.launchrc"
+echo "Finished! Run `launchrc edit` to edit your ~/.launchrc."
