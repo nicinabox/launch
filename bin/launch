@@ -9,8 +9,16 @@ class Launch
       remove(args[1])
     when 'add'
       add(args[1], args[2])
-    when 'list'
+    when 'alias'
+      add_alias(args[1], args[2])
+    when 'edit'
+      open_config
+    when /list|ls/
       all_services
+    when /help|-h/
+      list_commands
+    when nil
+      list_commands
     else
       open(args[0])
     end
@@ -21,13 +29,35 @@ class Launch
     @config ||= JSON.parse(File.read(launchrc))
   end
 
+  def open_config
+   `open #{launchrc}`
+  end
+
   def launchrc
     "#{ENV['HOME']}/.launchrc"
   end
 
+  def list_commands
+    commands = [
+      'add NAME URL',
+      'alias NAME SERVICE',
+      'remove NAME',
+      'list'
+    ]
+    puts commands.join("\n")
+  end
+
   def all_services
     services = config['services']
-    puts services.keys
+    aliases  = config['aliases'].invert
+
+    puts services.keys.map { |k|
+      if aliases[k]
+        "#{k} => #{aliases[k] }"
+      else
+        k
+      end
+    }.sort_by { |s| s }
   end
 
   def open(service)
@@ -35,19 +65,31 @@ class Launch
     aliases  = config['aliases']
 
     service = aliases[service] if aliases.include? service
-    port = services[service]
+    url = services[service]
 
-    puts "Launching #{service}"
-
-    if /^:/ =~ port
-      `open http://#{config['host']}#{port}`
-    else
-      `open http://#{port}`
+    unless url
+      abort "Service not found. Try help."
     end
+
+    url = if /^:/ =~ url
+            "http://#{config['host']}#{url}"
+          else
+            "http://#{url}"
+          end
+
+    puts "Launching #{service} (#{url})"
+    `open #{url}`
   end
 
   def add(name, url)
     config['services'][name] = url
+    File.open(launchrc, 'w') do |f|
+      f.write JSON.pretty_generate(config)
+    end
+  end
+
+  def add_alias(name, service)
+    config['aliases'][service] = name
     File.open(launchrc, 'w') do |f|
       f.write JSON.pretty_generate(config)
     end
